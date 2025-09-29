@@ -1,0 +1,17 @@
+
+jwt:
+  secret:
+  refresh:
+  time: 2
+  long: 60
+loglevel: "debug"
+server:
+  host: "localhost"
+  port: 8080
+database:
+  host: "localhost"
+  port: 5432
+  user: "taxi"
+  pwd: 
+  db: "portal"
+  ssl: "disable"

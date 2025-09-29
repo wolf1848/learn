@@ -1,0 +1,4 @@
+config/production
+log
+.log
+.vscode/
