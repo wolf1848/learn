@@ -1,13 +1,8 @@
 package model
 
 import (
-	"errors"
-
 	"golang.org/x/crypto/bcrypt"
 )
-
-var ErrUniqueEmail = errors.New("email уже используется")
-var ErrHashPwd = errors.New("попробуйте изменить пароль")
 
 type User struct {
 	ID      int
@@ -21,7 +16,7 @@ func (model *User) SetPwd(pwd string) error {
 	if err != nil {
 		return err
 	}
-	model.HashPwd = string(hash)
+	model.HashPwd = hash
 	return nil
 }
 
@@ -34,6 +29,6 @@ func hashPwd(pwd string) (string, error) {
 }
 
 func (model *User) CheckPasswordHash(pwd string) bool {
-    err := bcrypt.CompareHashAndPassword([]byte(model.HashPwd), []byte(pwd))
-    return err == nil
+	err := bcrypt.CompareHashAndPassword([]byte(model.HashPwd), []byte(pwd))
+	return err == nil
 }

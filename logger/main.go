@@ -7,12 +7,12 @@ import (
 	"github.com/rs/zerolog"
 )
 
-type ConcurrentLogger struct {
+type concurrentLogger struct {
 	logger zerolog.Logger
 	mu     sync.Mutex
 }
 
-func New(appName, appLogLevel string) *ConcurrentLogger {
+func New(appName, appLogLevel string) *concurrentLogger {
 	rotator := &lumberjack.Logger{
 		Filename:   "./log/" + appName + ".log",
 		MaxSize:    10,
@@ -33,12 +33,12 @@ func New(appName, appLogLevel string) *ConcurrentLogger {
 
 	logger := zerolog.New(rotator).Level(logLevel).With().Timestamp().Logger()
 
-	return &ConcurrentLogger{
+	return &concurrentLogger{
 		logger: logger,
 	}
 }
 
-func (l *ConcurrentLogger) Log(level zerolog.Level, msg string, fields ...map[string]any) {
+func (l *concurrentLogger) log(level zerolog.Level, msg string, fields ...map[string]any) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
@@ -53,18 +53,18 @@ func (l *ConcurrentLogger) Log(level zerolog.Level, msg string, fields ...map[st
 	event.Msg(msg)
 }
 
-func (l *ConcurrentLogger) Debug(msg string, fields ...map[string]any) {
-	l.Log(zerolog.DebugLevel, msg, fields...)
+func (l *concurrentLogger) Debug(msg string, fields ...map[string]any) {
+	l.log(zerolog.DebugLevel, msg, fields...)
 }
 
-func (l *ConcurrentLogger) Info(msg string, fields ...map[string]any) {
-	l.Log(zerolog.InfoLevel, msg, fields...)
+func (l *concurrentLogger) Info(msg string, fields ...map[string]any) {
+	l.log(zerolog.InfoLevel, msg, fields...)
 }
 
-func (l *ConcurrentLogger) Warn(msg string, fields ...map[string]any) {
-	l.Log(zerolog.WarnLevel, msg, fields...)
+func (l *concurrentLogger) Warn(msg string, fields ...map[string]any) {
+	l.log(zerolog.WarnLevel, msg, fields...)
 }
 
-func (l *ConcurrentLogger) Error(msg string, fields ...map[string]any) {
-	l.Log(zerolog.ErrorLevel, msg, fields...)
+func (l *concurrentLogger) Error(msg string, fields ...map[string]any) {
+	l.log(zerolog.ErrorLevel, msg, fields...)
 }

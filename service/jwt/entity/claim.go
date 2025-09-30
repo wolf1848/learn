@@ -4,12 +4,12 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type JwtAccessClaim struct {
+type AccessClaim struct {
 	UserID int
 	jwt.RegisteredClaims
 }
 
-type JwtRefreshClaim struct {
+type RefreshClaim struct {
 	UserID int
 	jwt.RegisteredClaims
 }

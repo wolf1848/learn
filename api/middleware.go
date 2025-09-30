@@ -2,11 +2,12 @@ package api
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/wolf1848/taxiportal/service/entity"
+	"github.com/wolf1848/taxiportal/api/response"
+	"github.com/wolf1848/taxiportal/service/jwt/entity"
 )
 
 type JwtMiddlewareService interface {
-	JwtValidateAccessToken(value string) (*entity.JwtAccessClaim, error)
+	ValidateAccessToken(string) (*entity.AccessClaim, error)
 }
 
 func JWTAuthMiddleware(service JwtMiddlewareService) echo.MiddlewareFunc {
@@ -14,12 +15,12 @@ func JWTAuthMiddleware(service JwtMiddlewareService) echo.MiddlewareFunc {
 		return func(c echo.Context) error {
 			token := c.Request().Header.Get("Authorization")
 			if token == "" {
-				return invalidAuthorizeResponse(c)
+				return response.InvalidAuthorize(c)
 			}
 
-			claim, err := service.JwtValidateAccessToken(token)
+			claim, err := service.ValidateAccessToken(token)
 			if err != nil {
-				return invalidAuthorizeResponse(c)
+				return response.InvalidAuthorize(c)
 			}
 
 			c.Set("user", claim)
