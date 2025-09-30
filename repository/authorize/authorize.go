@@ -2,6 +2,7 @@ package authorize
 
 import (
 	"context"
+	"errors"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -30,33 +31,31 @@ func (r *Repository) UserFindByEmail(email string) (*model.User, error) {
 	).Scan(&user.ID, &user.Name, &user.Email, &user.HashPwd)
 
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, serviceErrors.ErrRepositoryNoRows
 		}
 		return nil, err
 	}
 
 	return &user, nil
-
 }
 
-func (repo *Repository) UserGetById(id int) (*model.User, error) {
+func (r *Repository) UserGetById(id int) (*model.User, error) {
 
 	var user model.User
 
-	err := repo.db.QueryRow(
+	err := r.db.QueryRow(
 		context.Background(),
 		`SELECT id, name, email, password FROM users WHERE id=$1`,
 		id,
 	).Scan(&user.ID, &user.Name, &user.Email, &user.HashPwd)
 
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return nil, serviceErrors.ErrRepositoryNoRows
 		}
 		return nil, err
 	}
 
 	return &user, nil
-
 }

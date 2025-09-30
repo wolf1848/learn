@@ -61,6 +61,5 @@ func Handler(service Service) echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, responseData)
-
 	}
 }

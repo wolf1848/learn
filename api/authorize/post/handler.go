@@ -12,7 +12,7 @@ import (
 )
 
 type Service interface {
-	Authorize(input *entity.Input) (*entity.Output, error)
+	Authorize(*entity.Input) (*entity.Output, error)
 }
 
 func Handler(service Service) echo.HandlerFunc {
@@ -49,6 +49,5 @@ func Handler(service Service) echo.HandlerFunc {
 		}
 
 		return c.JSON(http.StatusOK, response)
-
 	}
 }
