@@ -24,7 +24,7 @@ func New() {
 
 	db := drivers.NewPostgres(&cfg.Database)
 
-	repositories := repository.NewRepository(db)
+	repositories := repository.NewRepositories(db)
 	services := service.NewServices(cfg, repositories, log)
 
 	server := api.New(services)
