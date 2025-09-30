@@ -2,3 +2,5 @@ config/production
 log
 .log
 .vscode/
+.idea
+.DS_Store

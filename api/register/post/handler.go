@@ -2,6 +2,8 @@ package post
 
 import (
 	"errors"
+	"github.com/wolf1848/taxiportal/validator"
+	"github.com/wolf1848/taxiportal/validator/rules"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -9,7 +11,6 @@ import (
 	"github.com/wolf1848/taxiportal/api/response"
 	serviceErrors "github.com/wolf1848/taxiportal/service/errors"
 	"github.com/wolf1848/taxiportal/service/register/entity"
-	"github.com/wolf1848/taxiportal/validator"
 )
 
 type Service interface {
@@ -25,10 +26,10 @@ func Handler(service Service) echo.HandlerFunc {
 			return response.InvalidJson(c)
 		}
 
-		validateResult := validate(req)
+		validateErrs := validate(req)
 
-		if !validateResult.IsValid() {
-			return response.InvalidDataRequest(c, validateResult.GetProblems())
+		if len(validateErrs) > 0 {
+			return response.InvalidDataRequest(c, validateErrs)
 		}
 
 		output, err := service.Register(&entity.Input{
@@ -43,15 +44,14 @@ func Handler(service Service) echo.HandlerFunc {
 			}
 
 			if errors.Is(err, entity.ErrUniqueEmail) {
-				validateResult.AddProblem("email", validator.ErrIsUnique.Error())
+				validateErrs.Add(validator.NewError(validator.FieldEmail, rules.ErrIsUnique.Error()))
 			}
-			
 
 			if errors.Is(err, entity.ErrHashPwd) {
-				validateResult.AddProblem("pwd", validator.ErrInvalidValue.Error())
+				validateErrs.Add(validator.NewError(validator.FieldPassword, rules.ErrInvalidValue.Error()))
 			}
 
-			return response.InvalidDataRequest(c, validateResult.GetProblems())
+			return response.InvalidDataRequest(c, validateErrs)
 		}
 
 		responseData := &dto.Response{

@@ -24,10 +24,8 @@ func Handler(service Service) echo.HandlerFunc {
 			return response.InvalidJson(c)
 		}
 
-		validateResult := validate(req)
-
-		if !validateResult.IsValid() {
-			return response.InvalidDataRequest(c, validateResult.GetProblems())
+		if errs := validate(req); len(errs) > 0 {
+			return response.InvalidDataRequest(c, errs)
 		}
 
 		output, err := service.Authorize(&entity.Input{

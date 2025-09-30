@@ -1,10 +1,31 @@
 package validator
 
-import "errors"
+const (
+	TypeValidate ErrType = iota
+	TypeCritical
+)
 
-var ErrIsEmpty = errors.New("поле обязательно для заполнения")
-var ErrIsMin = errors.New("поле должно содержать минимум %d символов")
-var ErrIsMax = errors.New("поле не должно содержать больше %d символов")
-var ErrIsEmail = errors.New("поле должно содержать валидный email адрес")
-var ErrIsUnique = errors.New("поле должно быть уникальным")
-var ErrInvalidValue = errors.New("не корректное значение")
+type ErrType int
+
+type Error struct {
+	Field   string
+	Message string
+	Type    ErrType
+}
+
+func NewError(field, message string) Error {
+	return Error{
+		Field:   field,
+		Message: message,
+		Type:    TypeValidate,
+	}
+}
+
+// TODO на случай если валидатор должен вернуть например ошибку выполнения запроса в БД
+func NewCriticalError(field, message string) Error {
+	return Error{
+		Field:   field,
+		Message: message,
+		Type:    TypeCritical,
+	}
+}
