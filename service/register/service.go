@@ -14,14 +14,12 @@ type Repository interface {
 }
 
 type Service struct {
-	config     *model.AppApiConfig
 	logger     tools.Logger
 	repository Repository
 }
 
-func NewService(cfg *model.AppApiConfig, repository Repository, log tools.Logger) *Service {
+func NewService(repository Repository, log tools.Logger) *Service {
 	return &Service{
-		config:     cfg,
 		logger:     log,
 		repository: repository,
 	}

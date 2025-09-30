@@ -23,15 +23,13 @@ type JwtService interface {
 }
 
 type Service struct {
-	config     *model.AppApiConfig
 	logger     tools.Logger
 	repository Repository
 	jwt        JwtService
 }
 
-func NewService(cfg *model.AppApiConfig, repository Repository, log tools.Logger, jwt JwtService) *Service {
+func NewService(repository Repository, log tools.Logger, jwt JwtService) *Service {
 	return &Service{
-		config:     cfg,
 		logger:     log,
 		repository: repository,
 		jwt:        jwt,

@@ -9,10 +9,10 @@ import (
 )
 
 type Service struct {
-	config *model.AppApiConfig
+	config model.Jwt
 }
 
-func NewService(cfg *model.AppApiConfig) *Service {
+func NewService(cfg model.Jwt) *Service {
 	return &Service{
 		config: cfg,
 	}
@@ -22,24 +22,24 @@ func (s *Service) GetAccessToken(userId int) (string, error) {
 	claims := &entity.AccessClaim{
 		UserID: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.config.Jwt.Time * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.config.Time * time.Minute)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
 	}
 
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.config.Jwt.Secret))
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.config.Secret))
 }
 
 func (s *Service) GetRefreshToken(userId int) (string, error) {
 	claims := &entity.RefreshClaim{
 		UserID: userId,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.config.Jwt.Long * time.Minute)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(s.config.Long * time.Minute)),
 		},
 	}
 
-	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.config.Jwt.Refresh))
+	return jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(s.config.Refresh))
 }
 
 func (s *Service) ValidateRefreshToken(value string) (*entity.RefreshClaim, error) {
@@ -52,7 +52,7 @@ func (s *Service) ValidateRefreshToken(value string) (*entity.RefreshClaim, erro
 			if token.Method != jwt.SigningMethodHS256 {
 				return nil, entity.ErrInvalidToken
 			}
-			return []byte(s.config.Jwt.Refresh), nil
+			return []byte(s.config.Refresh), nil
 		},
 	)
 
@@ -78,7 +78,7 @@ func (s *Service) ValidateAccessToken(value string) (*entity.AccessClaim, error)
 			if token.Method != jwt.SigningMethodHS256 {
 				return nil, entity.ErrInvalidToken
 			}
-			return []byte(s.config.Jwt.Secret), nil
+			return []byte(s.config.Secret), nil
 		},
 	)
 

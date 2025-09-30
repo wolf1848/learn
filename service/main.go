@@ -22,10 +22,10 @@ type Services struct {
 }
 
 func NewServices(cfg *model.AppApiConfig, repositories Repositories, log tools.Logger) *Services {
-	jwtService := jwt.NewService(cfg)
+	jwtService := jwt.NewService(cfg.Jwt)
 	return &Services{
-		register:  serviceRegister.NewService(cfg, repositories.Register(), log),
-		authorize: serviceAuthorize.NewService(cfg, repositories.Authorize(), log, jwtService),
+		register:  serviceRegister.NewService(repositories.Register(), log),
+		authorize: serviceAuthorize.NewService(repositories.Authorize(), log, jwtService), //TODO могут быть проблемы с цикличным импортом, если например захочешь внутри jwtService заюзать serviceAuthorize
 		jwt:       jwtService,
 	}
 }
